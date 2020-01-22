@@ -30,9 +30,9 @@ class jetpack_joyrider:
         self._game_frame_speed = frame_speed
 
     def __init__(self):
-        self._game_offset = 0
-        self._game_speed = 2
-        self._game_frame_speed = 0.1
+        self._game_offset = constants.game_offset
+        self._game_speed = constants.game_speed
+        self._game_frame_speed = constants.frame_speed
         game_board = Board()
 
         game_board.set_board_mode(constants.WELCOME)

@@ -97,13 +97,18 @@ class Board:
 				matrix[offset + 5][height] = word[i]
 
 			self.set_board_matrix(matrix)
+
 		elif current_mode == constants.END:
-			print("									GAME LOOP HAS ENDED")
+			self.initalise_board_matrix()
+			matrix = self.get_matrix()
+			matrix[int(constants.HEIGHT/2)][offset+50] = "GAME LOOP HAS ENDED    "  + str(offset)
+			self.set_board_matrix(matrix)
+
 		elif current_mode == constants.NORMAL:
 			# print all the objects as per the list of objects in the board ,
 			self.initalise_board_matrix()
 			matrix = self.get_matrix()
-			matrix[int(constants.HEIGHT/2)][offset:offset + 21] = [list("GAME LOOP IS GOING ON")]
+			matrix[int(constants.HEIGHT/2)][offset+30] = "GAME LOOP IS GOING ON    "  + str(offset)
 			self.set_board_matrix(matrix)
 
 

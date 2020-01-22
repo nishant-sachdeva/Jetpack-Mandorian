@@ -24,6 +24,12 @@ END = 3
 
 
 
+#game parameters
+
+game_offset = 1
+game_speed = 1
+frame_speed = 0.1
+
 # now we will make an array for getting the various shapes
 
 SHAPES= {}
