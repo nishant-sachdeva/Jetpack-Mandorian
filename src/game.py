@@ -9,31 +9,53 @@ import constants
 
 
 class jetpack_joyrider:
+    
+
+    def get_game_offset(self):
+        return self._game_offset
+    
+    def get_game_speed(self):
+        return self._game_speed
+
+    def get_frame_speed(self):
+        return self._game_frame_speed
+
+    def set_game_offset(self, offset):
+        self._game_offset = offset
+
+    def set_game_speed(self, speed):
+        self._game_speed = speed
+
+    def set_game_frame_speed(self, frame_speed):
+        self._game_frame_speed = frame_speed
 
     def __init__(self):
+        self._game_offset = 0
+        self._game_speed = 2
+        self._game_frame_speed = 0.1
         game_board = Board()
 
         game_board.set_board_mode(constants.WELCOME)
 
-        game_board.print_board()
+        game_board.print_board(self._game_offset)
 
         time.sleep(2)
 
         game_board.set_board_mode(constants.LOAD)
 
-        game_board.print_board()
+        game_board.print_board(self._game_offset)
 
         time.sleep(2)
 
         game_board.set_board_mode(constants.NORMAL)
 
-        game_board.print_board()
+        game_board.print_board(self._game_offset)
 
         self.run_game_loop(game_board)
 
 
     def run_game_loop(self , game_board):
-        count = 0
+
         while 1:
             # # get the current status of the board and print the full board output
             # now what all does the board contain
@@ -47,11 +69,25 @@ class jetpack_joyrider:
             # 8. once the bad dragon is active, he will shoot the big bullets, and that will be released at a massive speed
 
             # for starters, make all of this then we shall see what to do with the rest of the game
-            game_board.print_board()
-            print(count)
-            count = count + 1
 
-            time.sleep(0.01)
+            offset = self.get_game_offset()
+
+            game_board.print_board(offset)
+
+
+            time.sleep(self.get_frame_speed())
+
+            if offset == 500 :
+                game_board.set_board_mode(constants.END)
+                game_board.print_board(offset)
+                break
+            else:
+                self.set_game_offset(offset + self.get_game_speed())
+
+
+            # now we update the offset
+
+
             '''
     		1. Figure out a way to keep the board moving anyway, if input occurs then fine, else just m
             move the whole board forward and wait for input again. 
