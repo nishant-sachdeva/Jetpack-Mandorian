@@ -1,4 +1,5 @@
 import os
+import colorama
 ''' here I am looking to define all the constants from the game, like
 
 length , breadth  , height etc
@@ -11,8 +12,8 @@ ROOF = max( 1, int(rows)/10)
 FLOOR = max(1 , int(rows)/10)
 # these are the dimensions of the floor and the roof
 
-HEIGHT = 40 # approx length of the screen at the current full screen size
-LENGTH_OF_GAME = 700 # intended width ( basically the intended length of the game in terms of coloumns) 
+HEIGHT = 43 # approx length of the screen at the current full screen size
+LENGTH_OF_GAME = 1500 # intended width ( basically the intended length of the game in terms of coloumns) 
 FRAME_WIDTH = int(coloumns)
 
 
@@ -28,10 +29,15 @@ END = 3
 
 game_offset = 1
 game_speed = 1
-frame_speed = 0.1
+frame_speed = 0.02
 
 # now we will make an array for getting the various shapes
 
 SHAPES= {}
 SHAPES['board'] = ' '
 SHAPES['brick'] = '\033[2;43;33m#\033[22;49;39m'
+SHAPES['mando'] = '\033[44;35mM\033[49;39m'
+SHAPES['coins'] = '\033[39m$\033[39m'
+SHAPES['rod'] = '\033[1;96m\\\033[22;39m'
+SHAPES['brick'] = '\033[2;43;33m^\033[22;49;39m'
+SHAPES['magnet'] = '\033[1;92mM\033[22;39m'

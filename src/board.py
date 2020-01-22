@@ -58,62 +58,68 @@ class Board:
 		''' renders the board frame by frame '''
 		matrix = self.get_matrix()
 		# so now we have the matrix , and we will simly render later
-		print("\033c", end="")
+		print('\033[0;0H', end='')
 		
 		for i in matrix:
-			for j in i[offset:offset + constants.FRAME_WIDTH]:
+			for j in i[offset:(offset + int(constants.FRAME_WIDTH))]:
 				print(j, end='')
 			print('')
 
 
 
 
-	def print_board(self, offset):
+	def print_board(self, offset, list_of_objects):
 		# self.clear_screen()
-		print("\033c", end="")
+		print('\033[0;0H', end='')
 		#print the basic roof and floor parts
 
 		current_mode = self.get_board_mode()
+		self.initalise_board_matrix()
+		matrix = self.get_matrix()
+		
 		if current_mode == constants.WELCOME:
-			self.initalise_board_matrix()
-			matrix = self.get_matrix()
+
 			offset = int(offset)
 			height = int(constants.HEIGHT/2)
-			
-			word = [list("WELCOME")]
+			word = list("WELCOME")
 			for i in range(len(word)):	
-				matrix[offset + 5][height] = word[i]
+				matrix[height][offset + 20 + i] = word[i]
 
-			self.set_board_matrix(matrix)
 		elif current_mode == constants.LOAD :
-
-			self.initalise_board_matrix()
-			matrix = self.get_matrix()
-
-			height = int(constants.HEIGHT/2)
 			
-			word = [list("LOADING")]
+			height = int(constants.HEIGHT/2)
+			word = list("LOADING")
 			for i in range(len(word)):	
-				matrix[offset + 5][height] = word[i]
-
-			self.set_board_matrix(matrix)
+				matrix[height][offset + 20 + i] = word[i]
 
 		elif current_mode == constants.END:
-			self.initalise_board_matrix()
-			matrix = self.get_matrix()
-			matrix[int(constants.HEIGHT/2)][offset+50] = "GAME LOOP HAS ENDED    "  + str(offset)
-			self.set_board_matrix(matrix)
+
+			l = list("GAME LOOP HAS ENDED    "  + str(offset))
+			for i in range(len(l)):
+				matrix[5][offset+10 + i] = l[i]
 
 		elif current_mode == constants.NORMAL:
-			# print all the objects as per the list of objects in the board ,
-			self.initalise_board_matrix()
-			matrix = self.get_matrix()
-			matrix[int(constants.HEIGHT/2)][offset+30] = "GAME LOOP IS GOING ON    "  + str(offset)
-			self.set_board_matrix(matrix)
+
+			l = list("GAME LOOP IS GOING ON " + str(offset))
+			for i in range(len(l)):
+				matrix[5][offset+ 10 + i] = l[i]
 
 
+			for obj in list_of_objects:
+				try:
+					x , y = obj.get_coordinates()
+					height , width = obj.get_dimensions()
+					object_matrix = obj.get_matrix()
+
+					for i in range(x , x+width):
+						for j in range(y , y + height):
+							matrix[int(constants.HEIGHT) - int(constants.FLOOR) -j][offset + x + i] = object_matrix[j-y][i-x]
+				except:
+					pass
+
+		
+		self.set_board_matrix(matrix)
 		self.print_floor_and_roof(offset)
 
-	# these two funcitions are gonna be taking care of getting and setting the modes for the matrix that is the whole board
 
 
