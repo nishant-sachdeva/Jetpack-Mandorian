@@ -85,7 +85,7 @@ class person(character):
 		if y >= 75:
 			y = 75
 
-		print(str(x) + "  "+  str(y))
+		# print(str(x) + "  "+  str(y))
 		self.set_coordinates(x , y)
 
 

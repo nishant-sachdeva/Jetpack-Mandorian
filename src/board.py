@@ -54,7 +54,11 @@ class Board:
 		else:
 			_ = system('clear')
 
+
+
 	def print_floor_and_roof(self, offset):
+
+
 		''' renders the board frame by frame '''
 		matrix = self.get_matrix()
 		# so now we have the matrix , and we will simly render later
@@ -68,7 +72,7 @@ class Board:
 
 
 
-	def print_board(self, offset, list_of_objects):
+	def print_board(self, offset, list_of_objects, print_string):
 		# self.clear_screen()
 		print('\033[0;0H', end='')
 		#print the basic roof and floor parts
@@ -99,8 +103,7 @@ class Board:
 				matrix[5][offset+10 + i] = l[i]
 
 		elif current_mode == constants.NORMAL:
-
-			l = list("GAME LOOP IS GOING ON " + str(offset))
+			l = list(print_string)
 			for i in range(len(l)):
 				matrix[5][offset+ 10 + i] = l[i]
 
@@ -115,6 +118,7 @@ class Board:
 						for j in range(y , y + height):
 							matrix[int(constants.HEIGHT) - int(constants.FLOOR) -j][offset + x + i] = object_matrix[j-y][i-x]
 				except:
+					# print("could not display object")
 					pass
 
 		
