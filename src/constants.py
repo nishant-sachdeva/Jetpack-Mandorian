@@ -7,6 +7,8 @@ length , breadth  , height etc
 '''
 rows, coloumns = os.popen('stty size', 'r').read().split()
 
+shield_off_time = -100
+shield_on_time = 50
 
 window_for_running = 8
 

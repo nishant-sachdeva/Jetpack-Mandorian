@@ -98,7 +98,7 @@ class Board:
 
 		elif current_mode == constants.END:
 
-			l = list("GAME LOOP HAS ENDED    "  + str(offset))
+			l = list("GAME HAS ENDED    ")
 			for i in range(len(l)):
 				matrix[5][offset+10 + i] = l[i]
 

@@ -51,11 +51,12 @@ class jetpack_joyrider:
         for obj in list_of_characters:
             response = obj.move_left(amount)
             
-            if obj.get_name() == "mando":
-                obj.fall_down()
-
             if response == -1:
                 list_of_characters.remove(obj)
+
+            if obj.get_name() == "mando":
+                    obj.fall_down()
+
 
         self.set_game_list_of_characters(list_of_characters)
 
@@ -130,10 +131,20 @@ class jetpack_joyrider:
             self.set_game_list_of_characters(list_of_characters)
             # here , we initalise a bullet for the mando
         elif character == 'q':
-            self.set_quit_status(1)
-                        # quit the game 
+            self.set_quit_status(1)# quit the game 
+
+        elif character == 's':
+            self.activate_shield()
+            # we activate the shield for 20 seconds if it's timer is currently at -100
 
         return
+
+    def activate_shield(self):
+        if self._shield_timer == int(constants.shield_off_time):
+            self._shield_timer = int(constants.shield_on_time)
+            self._shield_status = 1
+        else:
+            print("shield cannot be activated yet")
 
     def get_game_score(self):
         return self._game_score
@@ -175,7 +186,9 @@ class jetpack_joyrider:
         self._game_speed = constants.game_speed
         self._game_frame_speed = constants.frame_speed
 
-        self._shield_status = "off"
+        self._shield_timer = int(constants.shield_off_time)
+        self._shield_available = 1
+        self._shield_status = 0
 
         self._game_list_of_characters = []
 
@@ -201,13 +214,13 @@ class jetpack_joyrider:
 
 
     def boost_mode_activate(self):
-        self._speed_boost = 1
+        self._speed_boost = 1  - self._speed_boost
 
     def is_boost_mode(self):
         return self._speed_boost
 
     def print_status(self):
-        return ("\tScore = ", self.get_game_score() , '\t Magnetic Attraction = ' , self.is_magnet() , '\t Lives = ', self.get_game_lives(), '\t Time = ', self.get_game_time() , '\t SHIELD : ',  self.get_shield_status() , '\t BOOST ' , self.is_boost_mode())
+        return ("\tScore = ", self.get_game_score() , '\t Magnetic Attraction = ' , self.is_magnet() , '\t Lives = ', self.get_game_lives(), '\t Time = ', self.get_game_time() ,  '\tSHIELD AVAILABLE = ', self._shield_available ,  '\t SHIELD STATUS : ',  self.get_shield_status() , '\t BOOST ' , self.is_boost_mode())
 
     def adjust_for_collisions(self):
         # return
@@ -218,7 +231,7 @@ class jetpack_joyrider:
             if item.get_name() == "mando":
                 # check for collisions with everyone
                 for obj in list_of_characters:
-                    if obj.get_name() != "bullet" and obj.get_name() != "mando":
+                    if obj.get_name() != "bullet" and obj.get_name() != "mando" and self.get_shield_status() == 0:
                         # now get the collision conditions
                         itemx , itemy = item.get_coordinates()
                         objx , objy =  obj.get_coordinates()
@@ -307,12 +320,15 @@ class jetpack_joyrider:
 
             game_board.print_board(offset, self.get_game_list_of_characters() , print_string)
 
-            self.move_game_objects(self.get_game_speed())
+            if self.is_boost_mode() == 1:
+                self.move_game_objects(5 * self.get_game_speed())
+            else:
+                self.move_game_objects(1* self.get_game_speed())
             self.generate_obstacles(offset)            
 
             self.deal_with_user_input()
 
-            if self.is_magnet() == 1:
+            if self.is_magnet() == 1 and self.get_shield_status() == 0:
                 self.deal_with_magnets()
 
             self.adjust_for_collisions()
@@ -330,12 +346,21 @@ class jetpack_joyrider:
 
             ## this section is to deal with the ending portions of the game
 
+            if self._shield_timer > int(constants.shield_off_time):
+                self._shield_timer = self._shield_timer - 1
+            else:
+                self._shield_available = 1
+
+            if self._shield_timer == 0:
+                self._shield_status = 0
+                self._shield_available = 0
+
             if offset >= int(constants.LENGTH_OF_GAME) - 100 : # in other words , when the game is ending
                 game_board.set_board_mode(constants.ENDGAME)
-                game_board.print_board(offset,  self.get_game_list_of_characters())
+                game_board.print_board(offset,  self.get_game_list_of_characters(), "ENDGAME  NOW!!")
             else:
                 if self.is_boost_mode() == 1:
-                    self.set_game_offset(offset + 10 * self.get_game_speed())
+                    self.set_game_offset(offset + self.get_game_speed())
                 else:
                     self.set_game_offset(offset + self.get_game_speed())
 
