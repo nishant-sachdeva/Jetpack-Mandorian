@@ -192,6 +192,8 @@ class jetpack_joyrider:
 
         self._game_list_of_characters = []
 
+        self._boss_mode = 0
+
         game_board = Board()
 
         game_board.set_board_mode(constants.WELCOME)
@@ -318,24 +320,29 @@ class jetpack_joyrider:
 
             print_string = self.print_status()
 
+            
             game_board.print_board(offset, self.get_game_list_of_characters() , print_string)
 
-            if self.is_boost_mode() == 1:
-                self.move_game_objects(5 * self.get_game_speed())
-            else:
-                self.move_game_objects(1* self.get_game_speed())
-            self.generate_obstacles(offset)            
+            if self._boss_mode == 0:
+                if self.is_boost_mode() == 1:
+                    self.move_game_objects(5 * self.get_game_speed())
+                else:
+                    self.move_game_objects(1* self.get_game_speed())
+                
+                self.generate_obstacles(offset)            
+
+                if self.is_magnet() == 1 and self.get_shield_status() == 0:
+                    self.deal_with_magnets()
+    
 
             self.deal_with_user_input()
 
-            if self.is_magnet() == 1 and self.get_shield_status() == 0:
-                self.deal_with_magnets()
-
+            
             self.adjust_for_collisions()
 
             response = self.do_we_need_to_quit()
 
-            if self.get_quit_status() == 1 or response== 1:
+            if self.get_quit_status() == 1 or response == 1:
                 game_board.set_board_mode(constants.END)
                 empty_list_of_characters = []
                 game_board.print_board(offset, empty_list_of_characters, "")
@@ -356,8 +363,15 @@ class jetpack_joyrider:
                 self._shield_available = 0
 
             if offset >= int(constants.LENGTH_OF_GAME) - 100 : # in other words , when the game is ending
+                monster = final_monster(offset + 50 , 55 , 7)
+                mando_object = person(offset + 10, constants.HEIGHT + 1)
+                new_list = []
+                new_list.append(monster)
+                new_list.append(mando_object)
+                self.set_game_list_of_characters(new_list)
                 game_board.set_board_mode(constants.ENDGAME)
                 game_board.print_board(offset,  self.get_game_list_of_characters(), "ENDGAME  NOW!!")
+                self._boss_mode = 1
             else:
                 if self.is_boost_mode() == 1:
                     self.set_game_offset(offset + self.get_game_speed())

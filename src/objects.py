@@ -166,7 +166,18 @@ class bullet(character):
 
 
 class final_monster(character):
-	def __init__(self, height, width , x_coordinate  , y_coordinate):
+	def __init__(self, x_coordinate  , y_coordinate, lives):
+		self._name = "final_monster"
+		self._x_coordinate = x_coordinate
+		self._y_coordinate = y_coordinate
+
+		self._height = 9
+		self._width = 5
+		self._lives = lives
+
+		char = "B"
+		self.make_matrix(char)
+
 		# add the guy to the list of special objects
 		# we will import it's graphic and make it's matrix right here, nothing to worry about here, 
 		return
