@@ -33,8 +33,14 @@ class character:
 	def move_up(self):
 		return
 
-	def move_left(self):
-		return 
+	def move_left(self, amount):
+		x , y = self.get_coordinates()
+		self.set_coordinates(x - amount, y)
+
+		if x < 0:
+			return -1
+		return 0 
+
 	
 	def make_matrix(self, character):
 		# now this character will be made into a proper character

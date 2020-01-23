@@ -6,6 +6,7 @@ from random import randrange
 import graphics
 import character
 from board import Board
+from input import *
 
 #so that I initalise all the objects here and import them from here itself
 
@@ -43,7 +44,90 @@ class jetpack_joyrider:
     def set_game_list_of_characters(self, list_of_characters):
         self._game_list_of_characters = list_of_characters
 
+    def move_game_objects(self, amount):
+        list_of_characters = self.get_game_list_of_characters()
+        for obj in list_of_characters:
+            response = obj.move_left(amount)
+            
+            if obj.get_name() == "mando":
+                obj.fall_down()
+
+            if response == -1:
+                list_of_characters.remove(obj)
+
+        self.set_game_list_of_characters(list_of_characters)
+
+        return
+
+    def generate_obstacles(self, offset):
+        list_of_characters = self.get_game_list_of_characters()
+
+        if offset % int(constants.window_for_running) == 0:
+            random_number = randrange(0,4)
+            x = offset + int(constants.FRAME_WIDTH) - 110
+            y =  randrange(44, 75)
+
+            if random_number == 0:
+                obj = magnet(x , y)
+            elif random_number == 1:
+                obj = coins(x , y)
+                obj2 = coins(x + 2 , y)
+                obj3 = coins(x + 4 , y)
+                list_of_characters.append(obj2)
+                list_of_characters.append(obj3)
+            elif random_number == 2:
+                obj = horizontal_rod(x , y)
+            elif random_number == 3:
+                obj = vertical_rod(x, y)
+
+            list_of_characters.append(obj)
+
+            self.set_game_list_of_characters(list_of_characters)
+
+        return
+
+    def get_quit_status(self):
+        return self._game_quit
+    def set_quit_status(self, status):
+        self._game_quit = status
+
+    def deal_with_user_input(self):
+        character = get_input()
+        list_of_characters = self.get_game_list_of_characters()
+        for obj in list_of_characters:
+            if obj.get_name() == "mando":
+                mando_object = obj
+                break
+
+
+        if character == 'a':
+            print("move left")
+            mando_object.move_left(2*self.get_game_speed())
+
+        elif character == 'd':
+            print("move right")
+            mando_object.move_right(2*self.get_game_speed())
+
+        elif character == 'w':
+            print("fly around")
+            mando_object.move_up(2)
+
+        elif character == ' ':
+            print("bullet fired")
+            x , y = mando_object.get_coordinates()
+            bullet_object = bullet(x , y)
+            list_of_characters.append(bullet_object)
+            self.set_game_list_of_characters(list_of_characters)
+            # here , we initalise a bullet for the mando
+        elif character == 'q':
+            self.set_quit_status(1)
+                        # quit the game 
+
+        return
+
+
     def __init__(self):
+        self._game_quit = 0
         self._game_offset = constants.game_offset
         self._game_speed = constants.game_speed
         self._game_frame_speed = constants.frame_speed
@@ -80,104 +164,34 @@ class jetpack_joyrider:
         self.set_game_list_of_characters(list_of_characters)
 
         while 1:
-            # # get the current status of the board and print the full board output
-            # now what all does the board contain
-            # 1. the roof
-            # 2. the floor
-            # 3. person
-            # 4. coins / rods / magets ( collisons have to be detected with all of them and the scores modified accordingly)
-            # 5. The moving background irrespective of the status of the present player 
-            # 6. Bullets from the joyrider : kill magent in two bullets and the rods in one bullet 
-            # 7. once we reach the last 100 of the game , we make the bad dragon active 
-            # 8. once the bad dragon is active, he will shoot the big bullets, and that will be released at a massive speed
-
-            # for starters, make all of this then we shall see what to do with the rest of the game
-
+           
             offset = self.get_game_offset()
 
-
-            ######################################################
-            # this section we update all the object coordinates smhw and then we pass the list and get it into that matrix
-
             list_of_characters = self.get_game_list_of_characters()
-            # now that we have the list of characters
             game_board.print_board(offset, list_of_characters)
 
-            # time.sleep(self.get_game_speed())
+            self.move_game_objects(self.get_game_speed())
+            self.generate_obstacles(offset)            
 
+            self.deal_with_user_input()
 
-            for obj in list_of_characters:
-                # change coordinates generally then change coordinates object wise
-                x , y = obj.get_coordinates()
-                obj.set_coordinates(x - int(self.get_game_speed()), y)
-
-                if obj.get_name() == "mando":
-                    x, y = obj.get_coordinates()
-                    print(x,offset,end=",")
-                    if x < 0:
-                        x = 0 
-                    obj.set_coordinates(x , y)
-                    x, y = obj.get_coordinates()
-                    print(x)
-
-
-                # now that we have set our coordinates ,we will incorporate it into our matrix for being drawn
-
-
-
-            # now write code to make sure a new object spawns every 5 seconds
-            if offset % 30 == 0:
-                random_number = randrange(0,4)
-
-                x = offset + int(constants.FRAME_WIDTH) - 100
-                y =  randrange(10, 30)
-
-                if random_number == 0:
-                    obj = magnet(x , y)
-                elif random_number == 1:
-                    obj = coins(x , y)
-                    obj2 = coins(x + 2 , y)
-                    obj3 = coins(x + 4 , y)
-                    list_of_characters.append(obj2)
-                    list_of_characters.append(obj3)
-                elif random_number == 2:
-                    obj = horizontal_rod(x , y)
-                elif random_number == 3:
-                    obj = vertical_rod(x, y)
-
-                list_of_characters.append(obj)
-
-
-            self.set_game_list_of_characters(list_of_characters)
+            if self.get_quit_status() == 1:
+                game_board.set_board_mode(constants.END)
+                empty_list_of_characters = []
+                game_board.print_board(offset, empty_list_of_characters)
+                break
             ######################################################
-
-
-
 
             time.sleep(self.get_frame_speed())
 
-            if offset == int(constants.LENGTH_OF_GAME) - 100 : # in other words , when the game is ending
-                game_board.set_board_mode(constants.END)
-                game_board.print_board(offset,  list_of_characters)
-                break
+            ## this section is to deal with the ending portions of the game
+
+            if offset >= int(constants.LENGTH_OF_GAME) - 100 : # in other words , when the game is ending
+                game_board.set_board_mode(constants.ENDGAME)
+                game_board.print_board(offset,  self.get_game_list_of_characters())
             else:
                 self.set_game_offset(offset + self.get_game_speed())
 
 
-            # now we update the offset
 
 
-            '''
-    		1. Figure out a way to keep the board moving anyway, if input occurs then fine, else just m
-            move the whole board forward and wait for input again. 
-
-            2. once the input has been taken , then we take the appropriate action and move the board forward again
-            => now what all actions can be there, 
-                a. some collision 
-                b. some bullet firing from either side
-                c. some obstacle showing up. 
-                d. I want a version of every obstacle every kind showing up every 3rd frame, 
-            => update status with all of this, and then go back to printing the whole thing
-
-
-			'''

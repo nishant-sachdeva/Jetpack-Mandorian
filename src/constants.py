@@ -8,8 +8,10 @@ length , breadth  , height etc
 rows, coloumns = os.popen('stty size', 'r').read().split()
 
 
-ROOF = max( 1, int(rows)/10)
-FLOOR = max(1 , int(rows)/10)
+window_for_running = 8
+
+ROOF = 4
+FLOOR = 4
 # these are the dimensions of the floor and the roof
 
 HEIGHT = 43 # approx length of the screen at the current full screen size
@@ -22,6 +24,7 @@ NORMAL = 0
 LOAD = 1
 WELCOME = 2
 END = 3
+ENDGAME = 4
 
 
 
@@ -29,7 +32,7 @@ END = 3
 
 game_offset = 1
 game_speed = 1
-frame_speed = 0.02
+frame_speed = 0.01
 
 # now we will make an array for getting the various shapes
 
@@ -41,3 +44,5 @@ SHAPES['coins'] = '\033[39m$\033[39m'
 SHAPES['rod'] = '\033[1;96m\\\033[22;39m'
 SHAPES['brick'] = '\033[2;43;33m^\033[22;49;39m'
 SHAPES['magnet'] = '\033[1;92mM\033[22;39m'
+
+
